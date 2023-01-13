@@ -1,0 +1,109 @@
+Fluents:
+
+agent_loc(X, Y): The location of the agent on a grid, represented by the coordinates (X, Y).
+ships_loc(Ships): The locations of ships on the grid, represented as a list of coordinates Ships.
+station(SX, SY): The location of the station on the grid, represented by the coordinates (SX, SY).
+capacity(Capacity): The maximum number of passengers that the agent can carry at a time.
+onGuard(OnGuard): The number of passengers currently being carried by the Coast guard ship.
+
+These are the arguments in the fluent S which is the state of the grid that looks like this  
+S = [[X, Y], Ships, [SX, SY], Capacity, OnGuard].
+
+
+Successor state axioms:
+
+action(S, pickup, S2): If the agent is at a location with a ship and has capacity to carry more passengers, then pickup is a valid action that will result in a new state S2 where the agent has picked up the passenger and OnGuard is incremented by 1.
+
+action(S, drop, S2): If the agent is at the station and is carrying at least one passenger, then drop is a valid action that will result in a new state S2 where the agent has dropped all the passengers it was carrying and OnGuard is reset to 0.
+
+action(S, up, S2): If the Coast Guard ship is not at the top column of the grid, then up is a valid action that will result in a new state S2 where the agent's X coordinate is decremented by 1.
+
+action(S, down, S2): If the Coast Guard ship is not at the bottom column of the grid, then down is a valid action that will result in a new state S2 where the agent's X coordinate is incremented by 1.
+
+action(S, left, S2): If the Coast Guard ship is not at the leftmost row of the grid, then left is a valid action that will result in a new state S2 where the agent's Y coordinate is decremented by 1.
+
+action(S, right, S2): If the Coast Guard ship is not at the rightmost row of the grid, then right is a valid action that will result in a new state S2 where the agent's Y coordinate is incremented by 1.
+
+These axioms define the possible actions and their effects on the state of the system. The search function is then used to find a path of actions that will take the system from the initial state to the goal state, as defined by the goalCheck predicate.
+
+Test Cases :
+
+We tested 7 different cases and here are the results.
+
+
+1)
+grid(3,3).
+agent_loc(2,1).
+ships_loc([[0,0],[2,2]]).
+station(1,1).
+capacity(1).
+
+Time: % 982 inferences, 0.000 CPU in 0.000 seconds (98% CPU, 3330349 Lips)
+
+S = result(drop, result(down, result(left, result(up, result(up, result(pickup, result(right, result(right, result(down, result(down, result(left, result(up, result(drop, result(up, result(right, result(down, result(down, result(pickup, result(left, result(up, result(up, s0))))))))))))))))))))) 
+
+
+2)
+grid(3,3).
+agent_loc(0,0).
+ships_loc([[2,0],[1,2]]).
+station(0,0).
+capacity(2).
+
+Time: % 1,021 inferences, 0.000 CPU in 0.000 seconds (99% CPU, 3451808 Lips)
+
+S = result(drop, result(up, result(up, result(left, result(down, result(down, result(left, result(up, result(pickup, result(down, result(right, result(up, result(up, result(right, result(down, result(down, result(drop, result(left, result(up, result(up, result(pickup, result(right, result(down, result(down, s0)))))))))))))))))))))))) 
+
+
+3)
+grid(4,4).
+agent_loc(2,1).
+ships_loc([[0,0],[1,3]]).
+station(0,1).
+capacity(1).
+
+Time: % 2,253 inferences, 0.001 CPU in 0.001 seconds (100% CPU, 2156637 Lips)
+
+S = result(drop, result(up, result(up, result(up, result(left, result(down, result(down, result(down, result(left, result(up, result(pickup, result(down, result(right, result(up, result(up, result(up, result(right, result(down, result(down, result(down, result(drop, result(up, result(up, result(up, result(right, result(down, result(down, result(down, result(pickup, result(left, result(up, result(up, s0)))))))))))))))))))))))))))))))) 
+
+
+4)
+grid(4,4).
+agent_loc(0,3).
+ships_loc([[3,3],[2,3]]).
+station(2,0).
+capacity(2).
+
+Time: % 2,258 inferences, 0.001 CPU in 0.001 seconds (100% CPU, 2896264 Lips)
+
+S = result(drop, result(down, result(down, result(left, result(up, result(up, result(up, result(left, result(down, result(down, result(down, result(left, result(up, result(up, result(up, result(pickup, result(down, result(down, result(down, result(right, result(up, result(up, result(up, result(right, result(down, result(down, result(down, result(right, result(up, result(up, result(drop, result(down, result(down, result(left, result(up, result(up, result(up, result(left, result(down, result(down, result(down, result(left, result(up, result(up, result(pickup, result(down, result(down, s0))))))))))))))))))))))))))))))))))))))))))))))) 
+
+
+5)
+Query: on the provided KB :
+
+goal(result(drop, result(up, result(left, result(pickup, result(right, result(down,result(drop, result(left, result(pickup, result(right, result(down, s0))))))))))))
+
+Time: % 17,848,203 inferences, 4.986 CPU in 4.986 seconds (100% CPU, 3579398 Lips)
+
+Result: true 
+
+
+6)
+Query on the provided KB :
+
+goal(result(drop, result(up, result(left, result(pickup, result(right, result(down, result(drop, result(left, result(pickup, result(right, result(down, s0))))))))))))
+
+Time: % 17,848,203 inferences, 4.958 CPU in 4.958 seconds (100% CPU, 3599619 Lips)
+
+Result: true
+
+
+7)
+Query on the provided KB :
+
+goal(result(up,result(down,s0)))
+
+Time: % 64,947,492 inferences, 18.038 CPU in 18.038 seconds (100% CPU, 3600603 Lips)
+
+Result: false
